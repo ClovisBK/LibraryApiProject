@@ -38,6 +38,29 @@ namespace LibrarySystemApi.Controllers
                 }).ToListAsync();
             return Ok(loan);
         }
+        [HttpGet("overdue-loans")]
+        public async Task<ActionResult<List<LoanDto>>> GetOverDueLoans()
+        {
+            var overdue = await _context.Loans
+                .Include(b => b.BookCopy)
+                    .ThenInclude(bc => bc!.Book)
+                .Include(l => l.Member)
+                .Where(r => r.DueDate < DateTimeOffset.Now && !r.ReturnDate.HasValue)
+                .Select(b => new LoanDto
+                {
+                    Id = b.Id,
+                    BookCopyId = b.BookCopyId,
+                    BookTitle = b.BookCopy.Book.Title,
+                    CopyNumber= b.BookCopy.CopyNumber,
+                    Borrower = b.Member!.FullName,
+                    LoanDate = b.LoanDate,
+                    DueDate= b.DueDate,
+                    ReturnDate = b.ReturnDate
+                })
+                .ToListAsync();
+            return Ok(overdue);
+
+        }
         [HttpGet("{id}")]
         public async Task<ActionResult<LoanDto>> GetLoanById(int id)
         {

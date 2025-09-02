@@ -516,6 +516,26 @@
   },
   {
     "ContainingType": "LibrarySystemApi.Controllers.LoanController",
+    "Method": "GetOverDueLoans",
+    "RelativePath": "api/Loan/overdue-loans",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[LibrarySystemApi.Dtos.LoanDto, LibrarySystemApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "LibrarySystemApi.Controllers.LoanController",
     "Method": "ReturnBook",
     "RelativePath": "api/Loan/return",
     "HttpMethod": "POST",
