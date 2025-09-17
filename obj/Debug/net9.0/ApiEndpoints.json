@@ -1,5 +1,99 @@
 [
   {
+    "ContainingType": "LibrarySystemApi.Controllers.AuthController",
+    "Method": "AdminOnlyEndpoint",
+    "RelativePath": "api/Auth/Admin-only",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "LibrarySystemApi.Controllers.AuthController",
+    "Method": "AuthEndpoint",
+    "RelativePath": "api/Auth/Authenticated",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "LibrarySystemApi.Controllers.AuthController",
+    "Method": "Login",
+    "RelativePath": "api/Auth/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "LibrarySystemApi.Dtos.AuthoDtos.LoginDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "LibrarySystemApi.Dtos.AuthoDtos.TokenResponseDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "LibrarySystemApi.Controllers.AuthController",
+    "Method": "RegisterAdmin",
+    "RelativePath": "api/Auth/register/admin",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "LibrarySystemApi.Dtos.AuthoDtos.RegisterUserDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "LibrarySystemApi.Controllers.AuthController",
+    "Method": "Register",
+    "RelativePath": "api/Auth/register/librarian",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "LibrarySystemApi.Dtos.AuthoDtos.RegisterUserDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "LibrarySystemApi.Controllers.AuthController",
+    "Method": "RegisterMember",
+    "RelativePath": "api/Auth/register/member",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "LibrarySystemApi.Dtos.AuthoDtos.RegisterUserDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "LibrarySystemApi.Controllers.AuthorController",
     "Method": "GetAuthors",
     "RelativePath": "api/Author",
@@ -87,6 +181,177 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "LibrarySystemApi.Controllers.BookController",
+    "Method": "GetLibraryBooks",
+    "RelativePath": "api/Book",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[LibrarySystemApi.Dtos.BookDto, LibrarySystemApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "LibrarySystemApi.Controllers.BookController",
+    "Method": "AddBook",
+    "RelativePath": "api/Book",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "newBookDto",
+        "Type": "LibrarySystemApi.Dtos.CreateBookDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "LibrarySystemApi.Controllers.BookController",
+    "Method": "GetBookById",
+    "RelativePath": "api/Book/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "LibrarySystemApi.Dtos.BookDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "LibrarySystemApi.Controllers.BookController",
+    "Method": "UpdateBook",
+    "RelativePath": "api/Book/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updatedBookDto",
+        "Type": "LibrarySystemApi.Dtos.UpdateBookDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "LibrarySystemApi.Controllers.BookController",
+    "Method": "DeleteBook",
+    "RelativePath": "api/Book/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "LibrarySystemApi.Controllers.BookController",
+    "Method": "GetBooksOrderedByYear",
+    "RelativePath": "api/Book/Order-by-year",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[LibrarySystemApi.Dtos.BookDto, LibrarySystemApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "LibrarySystemApi.Controllers.BookController",
+    "Method": "GetBooksByPublicationYear",
+    "RelativePath": "api/Book/publicationYear",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "year",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[LibrarySystemApi.Dtos.BookDto, LibrarySystemApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "LibrarySystemApi.Controllers.BookController",
+    "Method": "SearchBookByTitle",
+    "RelativePath": "api/Book/Search",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "term",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[LibrarySystemApi.Dtos.BookDto, LibrarySystemApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "LibrarySystemApi.Controllers.BookCopyController",
@@ -188,177 +453,6 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "LibrarySystemApi.Controllers.BookLibraryController",
-    "Method": "GetLibraryBooks",
-    "RelativePath": "api/BookLibrary",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.List\u00601[[LibrarySystemApi.Dtos.BookDto, LibrarySystemApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "LibrarySystemApi.Controllers.BookLibraryController",
-    "Method": "AddBook",
-    "RelativePath": "api/BookLibrary",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "newBookDto",
-        "Type": "LibrarySystemApi.Dtos.CreateBookDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "LibrarySystemApi.Controllers.BookLibraryController",
-    "Method": "GetBookById",
-    "RelativePath": "api/BookLibrary/{id}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "LibrarySystemApi.Dtos.BookDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "LibrarySystemApi.Controllers.BookLibraryController",
-    "Method": "UpdateBook",
-    "RelativePath": "api/BookLibrary/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "updatedBookDto",
-        "Type": "LibrarySystemApi.Dtos.UpdateBookDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "LibrarySystemApi.Controllers.BookLibraryController",
-    "Method": "DeleteBook",
-    "RelativePath": "api/BookLibrary/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "LibrarySystemApi.Controllers.BookLibraryController",
-    "Method": "GetBooksOrderedByYear",
-    "RelativePath": "api/BookLibrary/Order-by-year",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.List\u00601[[LibrarySystemApi.Dtos.BookDto, LibrarySystemApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "LibrarySystemApi.Controllers.BookLibraryController",
-    "Method": "GetBooksByPublicationYear",
-    "RelativePath": "api/BookLibrary/publicationYear",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "year",
-        "Type": "System.Int32",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.List\u00601[[LibrarySystemApi.Dtos.BookDto, LibrarySystemApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "LibrarySystemApi.Controllers.BookLibraryController",
-    "Method": "SearchBookByTitle",
-    "RelativePath": "api/BookLibrary/Search",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "term",
-        "Type": "System.String",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.List\u00601[[LibrarySystemApi.Dtos.BookDto, LibrarySystemApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
     "ContainingType": "LibrarySystemApi.Controllers.GenreController",
     "Method": "GetGenres",
     "RelativePath": "api/Genre",
@@ -380,7 +474,7 @@
   },
   {
     "ContainingType": "LibrarySystemApi.Controllers.LoanController",
-    "Method": "GetLoand",
+    "Method": "GetLoands",
     "RelativePath": "api/Loan",
     "HttpMethod": "GET",
     "IsController": true,
@@ -455,7 +549,7 @@
       },
       {
         "Name": "updatedLoandDto",
-        "Type": "LibrarySystemApi.Dtos.CreateLoanDto",
+        "Type": "LibrarySystemApi.Dtos.UpdateLoanDto",
         "IsRequired": true
       }
     ],
@@ -572,22 +666,6 @@
   },
   {
     "ContainingType": "LibrarySystemApi.Controllers.MemberController",
-    "Method": "AddMembers",
-    "RelativePath": "api/Member",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "newMemberDto",
-        "Type": "LibrarySystemApi.Dtos.CreateMemberDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "LibrarySystemApi.Controllers.MemberController",
     "Method": "GetMemberById",
     "RelativePath": "api/Member/{id}",
     "HttpMethod": "GET",
@@ -597,27 +675,6 @@
       {
         "Name": "id",
         "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "LibrarySystemApi.Controllers.MemberController",
-    "Method": "UpdateMember",
-    "RelativePath": "api/Member/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "updatedMemberDto",
-        "Type": "LibrarySystemApi.Dtos.UpdateMemberDto",
         "IsRequired": true
       }
     ],
@@ -664,6 +721,22 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "LibrarySystemApi.Controllers.MemberController",
+    "Method": "UpdateMember",
+    "RelativePath": "api/Member/editProfile",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "updatedMemberDto",
+        "Type": "LibrarySystemApi.Dtos.UpdateMemberDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "LibrarySystemApi.Controllers.ReservationController",

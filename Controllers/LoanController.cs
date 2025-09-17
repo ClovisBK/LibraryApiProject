@@ -1,6 +1,8 @@
-﻿using LibrarySystemApi.Data;
+﻿using System.Security.Claims;
+using LibrarySystemApi.Data;
 using LibrarySystemApi.Dtos;
 using LibrarySystemApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,8 +18,12 @@ namespace LibrarySystemApi.Controllers
         {
             _context = context;
         }
+        const string adminRole = "Admin";
+        const string memberRole = "Member";
+
+        [Authorize(Roles = adminRole)]
         [HttpGet]
-        public async Task<ActionResult<List<LoanDto>>> GetLoand()
+        public async Task<ActionResult<List<LoanDto>>> GetLoands()
         {
             var loan = await _context.Loans
                 .Include(b => b.BookCopy)
@@ -38,6 +44,7 @@ namespace LibrarySystemApi.Controllers
                 }).ToListAsync();
             return Ok(loan);
         }
+        [Authorize(Roles = adminRole)]
         [HttpGet("overdue-loans")]
         public async Task<ActionResult<List<LoanDto>>> GetOverDueLoans()
         {
@@ -61,6 +68,7 @@ namespace LibrarySystemApi.Controllers
             return Ok(overdue);
 
         }
+        [Authorize(Roles = adminRole)]
         [HttpGet("{id}")]
         public async Task<ActionResult<LoanDto>> GetLoanById(int id)
         {
@@ -87,11 +95,25 @@ namespace LibrarySystemApi.Controllers
             }
             return Ok(existingLoan);
         }
+        [Authorize(Roles =  memberRole)]
         [HttpPost]
         public async Task<ActionResult> AddLoan(CreateLoanDto newLoanDto)
         {
             if (newLoanDto == null)
                 return BadRequest();
+
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized("You are probably not registered");
+
+            var userId = Guid.Parse(userIdClaim);
+
+            //retrieving the member entity
+
+            var member  = await _context.Members.FirstOrDefaultAsync(m => m.UserId == userId);
+            if (member == null)
+                return Unauthorized("You are not a patron and can't borrow a book");
+
             var bookCopy = await _context.BooksCopies.FindAsync(newLoanDto.BookCopyId);
             if(bookCopy == null)
                 return  NotFound("Book copy is not found");
@@ -99,10 +121,10 @@ namespace LibrarySystemApi.Controllers
                 return BadRequest("Book copy is already borrowed");
             var loan = new Loan
             {
-                MemberId = newLoanDto.MemberId,
+                MemberId = member.Id,
                 BookCopyId = newLoanDto.BookCopyId,
                 LoanDate = DateTimeOffset.UtcNow,
-                DueDate= newLoanDto.DueDate
+                DueDate= DateTime.Now.AddDays(5)
             };
             bookCopy.Status = BookCopyStatus.Loaned;
 
@@ -113,15 +135,16 @@ namespace LibrarySystemApi.Controllers
             {
                 Id = loan.Id,
                 BookCopyId = loan.BookCopyId,
-                MemberId = loan.MemberId,
+                MemberId = member.Id,
                 LoanDate = loan.LoanDate,
                 DueDate = loan.DueDate
             };
             return CreatedAtAction(nameof(GetLoanById), new {id = loan.Id}, loanDto);
            
         }
+        [Authorize(Roles = adminRole)]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateLoan(int id, CreateLoanDto updatedLoandDto)
+        public async Task<IActionResult> UpdateLoan(int id, UpdateLoanDto updatedLoandDto)
         {
             var existingLoan = await _context.Loans.FindAsync(id);
             if (existingLoan == null)
@@ -133,6 +156,7 @@ namespace LibrarySystemApi.Controllers
 
             return NoContent();
         }
+        [Authorize(Roles = adminRole)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLoan(int id)
         {
@@ -143,6 +167,7 @@ namespace LibrarySystemApi.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+        [Authorize(Roles = adminRole)]
         [HttpPost("return")]
         public async Task<IActionResult> ReturnBook([FromBody] ReturnBookDto returnDto)
         {
@@ -179,6 +204,7 @@ namespace LibrarySystemApi.Controllers
                 await _context.SaveChangesAsync();
             return Ok(new {message = "Book has been successfully reuturned", loanId = loan.Id});
         }
+        [Authorize(Roles = adminRole)]
         [HttpPut("{id}/renewLoan")]
         public async Task<IActionResult> RenewLoan(int id, RenewLoanDto renewDto)
         {
@@ -194,12 +220,12 @@ namespace LibrarySystemApi.Controllers
             loan.DueDate = renewDto.DueDate;
             loan.Renewals++;
             if (loan.Renewals > 2)
-
                 return BadRequest("reached renewal limit");
+
             await _context.SaveChangesAsync();
             return Ok(new { message = "Successfully extended due date", loanId = id });
         }
-
+        [Authorize(Roles = adminRole)]
         [HttpPost("checkout/{reservationId}")]
         public async Task<IActionResult> CheckoutFromHold(int reservationId)
         {
@@ -210,7 +236,7 @@ namespace LibrarySystemApi.Controllers
                 return NotFound("Reservation not found");
             if (reservation.Status != ReservationSatus.ReadyForPickup)
                 return BadRequest("This reservation is not ready for pickup");
-            
+
             //finding an available book copy that is on hold for this book title
             var bookCopy = await _context.BooksCopies
                 .Include(b =>b.Book)

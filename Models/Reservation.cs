@@ -6,7 +6,7 @@ namespace LibrarySystemApi.Models
     {
         public int Id { get; set; }
         public int BookId { get; set; }
-        public  BookLibrary? Book { get; set; }
+        public  Book? Book { get; set; }
         public int MemberId { get; set; }
         public Member? Member { get; set; }
         public DateTimeOffset ReservationDate { get; set; }

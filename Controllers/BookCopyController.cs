@@ -1,6 +1,7 @@
 ﻿using LibrarySystemApi.Data;
 using LibrarySystemApi.Dtos;
 using LibrarySystemApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ namespace LibrarySystemApi.Controllers
     {
         private readonly BookLibraryDbContext _context = context;
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<List<BookCopy>>> GetBookCopies()
         {
@@ -46,6 +48,7 @@ namespace LibrarySystemApi.Controllers
                 }).FirstOrDefaultAsync();
             return Ok(existingCopy);
         }
+        [Authorize(Roles ="Admin")]
         [HttpPost]
         public async Task<ActionResult> AddBookCopy(CreateBookCopyDto bookCopyDto)
         {
@@ -74,6 +77,7 @@ namespace LibrarySystemApi.Controllers
             };
             return CreatedAtAction(nameof(GetBookCopyById), new { id = bookCopy.Id }, bookDto);
         }
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBookCopy(int id, CreateBookCopyDto updatedBookCopyDto)
         {
@@ -87,6 +91,7 @@ namespace LibrarySystemApi.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBookCopy(int id)
         {

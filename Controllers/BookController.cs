@@ -1,5 +1,6 @@
 ﻿using LibrarySystemApi.Data;
 using LibrarySystemApi.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,15 +8,15 @@ namespace LibrarySystemApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BookLibraryController : ControllerBase
+    public class BookController : ControllerBase
     {
         private readonly BookLibraryDbContext _context;
 
-        public BookLibraryController(BookLibraryDbContext context)
+        public BookController(BookLibraryDbContext context)
         {
             _context = context;
         }
-
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<List<BookDto>>> GetLibraryBooks()
         {
@@ -62,7 +63,7 @@ namespace LibrarySystemApi.Controllers
 
             return Ok(book);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> AddBook(CreateBookDto newBookDto)
         {
@@ -75,7 +76,7 @@ namespace LibrarySystemApi.Controllers
             if (!GenreExists)
                 return BadRequest("Genre not found");
 
-            var book = new BookLibrary
+            var book = new Book
             {
                 Title = newBookDto.Title,
                 ImageUrl = newBookDto.ImageUrl,
@@ -105,7 +106,7 @@ namespace LibrarySystemApi.Controllers
 
             return CreatedAtAction(nameof(GetBookById), new { id = book.Id }, bookDto);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBook(int id, UpdateBookDto updatedBookDto)
         {
@@ -132,7 +133,7 @@ namespace LibrarySystemApi.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
@@ -144,6 +145,7 @@ namespace LibrarySystemApi.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+        [AllowAnonymous]
         [HttpGet("Search")]
         public async Task<ActionResult<List<BookDto>>> SearchBookByTitle([FromQuery] string term)
         {
@@ -154,7 +156,11 @@ namespace LibrarySystemApi.Controllers
             var books = await _context.Books
                 .Include(b => b.Author)
                 .Include(b => b.Genre)
-                .Where(b => b.Title != null && b.Title.Contains(term.ToLower()))
+                .Where(b => b.Title != null && b.Title.Contains(term.ToLower())||
+                b.Author!.Name.Contains(term.ToLower()) ||
+                b.Genre!.Name.Contains(term.ToLower())
+                
+                )
                 .Select(b => new BookDto
                 {
                     Id = b.Id,
@@ -169,6 +175,7 @@ namespace LibrarySystemApi.Controllers
                 }).ToListAsync();
             return Ok(books);
         }
+        [AllowAnonymous]
         [HttpGet("publicationYear")]
         public async Task<ActionResult<List<BookDto>>> GetBooksByPublicationYear(int year)
         {
@@ -191,6 +198,7 @@ namespace LibrarySystemApi.Controllers
                 }).ToListAsync();
             return Ok(books);
         }
+        [AllowAnonymous]
         [HttpGet("Order-by-year")]
         public async Task<ActionResult<List<BookDto>>> GetBooksOrderedByYear()
         {

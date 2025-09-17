@@ -22,7 +22,7 @@ namespace LibrarySystemApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("LibrarySystemApi.BookLibrary", b =>
+            modelBuilder.Entity("LibrarySystemApi.Book", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -225,6 +225,55 @@ namespace LibrarySystemApi.Migrations
                             Pages = 624,
                             PublicationYear = 2017,
                             Title = "Tribe of Mentors"
+                        });
+                });
+
+            modelBuilder.Entity("LibrarySystemApi.Models.Admin", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("JoinedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Admins");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Address = "Mvog-Betsi",
+                            Email = "clovis@mail.com",
+                            FullName = "Clovis Bin Kebeh",
+                            JoinedDate = new DateTime(2025, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Phone = "+237645645432",
+                            UserId = new Guid("11111111-1111-1111-1111-111111111111")
                         });
                 });
 
@@ -489,35 +538,6 @@ namespace LibrarySystemApi.Migrations
                     b.HasIndex("MemberId");
 
                     b.ToTable("Loans");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            BookCopyId = 1,
-                            DueDate = new DateTime(2024, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LoanDate = new DateTimeOffset(new DateTime(2024, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 1, 0, 0, 0)),
-                            MemberId = 1,
-                            Renewals = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            BookCopyId = 2,
-                            DueDate = new DateTime(2024, 6, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LoanDate = new DateTimeOffset(new DateTime(2024, 6, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 1, 0, 0, 0)),
-                            MemberId = 2,
-                            Renewals = 0
-                        },
-                        new
-                        {
-                            Id = 3,
-                            BookCopyId = 3,
-                            DueDate = new DateTime(2024, 6, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LoanDate = new DateTimeOffset(new DateTime(2024, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 1, 0, 0, 0)),
-                            MemberId = 3,
-                            Renewals = 0
-                        });
                 });
 
             modelBuilder.Entity("LibrarySystemApi.Models.Member", b =>
@@ -547,65 +567,14 @@ namespace LibrarySystemApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Members");
+                    b.HasIndex("UserId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Address = "Mvog-Betsi, Baobab",
-                            Email = "kebehclovis@gmail.com",
-                            FullName = "Kebeh Clovis",
-                            JoinedDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Phone = "+237 679695180"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Address = "Ohio, Bellevue",
-                            Email = "amira.johnson@example.com",
-                            FullName = "Amira Johnson",
-                            JoinedDate = new DateTime(2024, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Phone = "+1 434534534455"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Address = "Obili",
-                            Email = "david.lee@example.com",
-                            FullName = "David Lee",
-                            JoinedDate = new DateTime(2024, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Phone = "+237 654432443"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Address = "Nkolbisson",
-                            Email = "fatima.ali@example.com",
-                            FullName = "Fatima Ali",
-                            JoinedDate = new DateTime(2025, 2, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Phone = "+237 654345676"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Address = "Leke steet 1",
-                            Email = "luca.rossi@example.com",
-                            FullName = "Luca Rossi",
-                            JoinedDate = new DateTime(2022, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Phone = "+234 5334645345"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Address = "",
-                            Email = "sophia.mueller@example.com",
-                            FullName = "Sophia Müller",
-                            JoinedDate = new DateTime(2023, 11, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Phone = "+237 674534321"
-                        });
+                    b.ToTable("Members");
                 });
 
             modelBuilder.Entity("LibrarySystemApi.Models.Reservation", b =>
@@ -636,19 +605,47 @@ namespace LibrarySystemApi.Migrations
                     b.HasIndex("MemberId");
 
                     b.ToTable("Reservations");
+                });
+
+            modelBuilder.Entity("LibrarySystemApi.Models.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("RefreshTokenExpiryTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
 
                     b.HasData(
                         new
                         {
-                            Id = 1,
-                            BookId = 10,
-                            MemberId = 1,
-                            ReservationDate = new DateTimeOffset(new DateTime(2025, 8, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 1, 0, 0, 0)),
-                            Status = "Pending"
+                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Email = "clovis@mail.com",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFK0oYnrWfEwye5H/s6oxNRwVBLxbSqrj6X0/dPwVg5vRsQom3Vu/gNF2x6R9uKWQQ==",
+                            Role = "Admin"
                         });
                 });
 
-            modelBuilder.Entity("LibrarySystemApi.BookLibrary", b =>
+            modelBuilder.Entity("LibrarySystemApi.Book", b =>
                 {
                     b.HasOne("LibrarySystemApi.Models.Author", "Author")
                         .WithMany()
@@ -667,9 +664,20 @@ namespace LibrarySystemApi.Migrations
                     b.Navigation("Genre");
                 });
 
+            modelBuilder.Entity("LibrarySystemApi.Models.Admin", b =>
+                {
+                    b.HasOne("LibrarySystemApi.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("LibrarySystemApi.Models.BookCopy", b =>
                 {
-                    b.HasOne("LibrarySystemApi.BookLibrary", "Book")
+                    b.HasOne("LibrarySystemApi.Book", "Book")
                         .WithMany()
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -697,9 +705,20 @@ namespace LibrarySystemApi.Migrations
                     b.Navigation("Member");
                 });
 
+            modelBuilder.Entity("LibrarySystemApi.Models.Member", b =>
+                {
+                    b.HasOne("LibrarySystemApi.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("LibrarySystemApi.Models.Reservation", b =>
                 {
-                    b.HasOne("LibrarySystemApi.BookLibrary", "Book")
+                    b.HasOne("LibrarySystemApi.Book", "Book")
                         .WithMany()
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)

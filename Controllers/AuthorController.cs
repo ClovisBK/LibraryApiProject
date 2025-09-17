@@ -1,5 +1,6 @@
 ﻿using LibrarySystemApi.Data;
 using LibrarySystemApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -13,12 +14,14 @@ namespace LibrarySystemApi.Controllers
     {
         private readonly BookLibraryDbContext _context = context;
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<List<Author>>> GetAuthors()
         {
             var authors = await _context.Authors.ToListAsync();
             return Ok(authors);
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult> GetAuthorById(int id)
         {
@@ -29,6 +32,7 @@ namespace LibrarySystemApi.Controllers
             }
             return Ok(author);
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> AddAuthor(Author newAuthor)
         {
@@ -39,6 +43,7 @@ namespace LibrarySystemApi.Controllers
            
             return CreatedAtAction(nameof(GetAuthorById), new {id = newAuthor.Id}, newAuthor);
         }
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAuthor(int id, Author newAuthor)
         {
@@ -52,6 +57,7 @@ namespace LibrarySystemApi.Controllers
             return NoContent();
             
         }
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAuthor(int id)
         {

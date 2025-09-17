@@ -1,6 +1,8 @@
-﻿using LibrarySystemApi.Data;
+﻿using System.Security.Claims;
+using LibrarySystemApi.Data;
 using LibrarySystemApi.Dtos;
 using LibrarySystemApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +15,10 @@ namespace LibrarySystemApi.Controllers
     {
         private readonly BookLibraryDbContext _context = context;
 
+        const string adminRole = "Admin";
+        const string memberRole = "Member";
+
+        [Authorize(Roles = adminRole)]
         [HttpGet]
         public async Task<ActionResult<List<Reservation>>> GetReservations()
         {
@@ -33,6 +39,7 @@ namespace LibrarySystemApi.Controllers
 
             return Ok(reservation);
         }
+        [Authorize(Roles = adminRole)]
         [HttpGet("{id}")]
         public async Task<ActionResult<ReservationDto>> GetReservationById(int id)
         {
@@ -56,6 +63,7 @@ namespace LibrarySystemApi.Controllers
 
 
         }
+        [Authorize(Roles = memberRole)]
 
         [HttpPost]
         public async Task<ActionResult> AddReservation(CreateReservationDto newReservation)
@@ -63,9 +71,18 @@ namespace LibrarySystemApi.Controllers
             if (newReservation == null)
                 return BadRequest("Invalid Reservation Data");
 
-            var memberExists = await _context.Members.AnyAsync(m => m.Id == newReservation.MemberId);
-            if (!memberExists)
-                return NotFound("Member not found");
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if(userIdClaim == null)
+                return Unauthorized("You are probably not registered");
+            var userId = Guid.Parse(userIdClaim);
+
+            var member = await _context.Members.FirstOrDefaultAsync(u => u.UserId == userId);
+            if(member == null) 
+                return Unauthorized(new {mesage="Sorry! you are not a patron and can't make reservations"});
+
+
+
+            
             var bookExists = await _context.Books.AnyAsync(b => b.Id == newReservation.BookId);
             if (!bookExists)
                 return NotFound("Book not found");
@@ -74,17 +91,17 @@ namespace LibrarySystemApi.Controllers
             var isAvailable = await _context.BooksCopies
                 .AnyAsync(bc => bc.BookId == newReservation.BookId && bc.Status == BookCopyStatus.Available);
             if (isAvailable)
-                return BadRequest("An available copy of this book already exists. No reservation needed");
+                return BadRequest("An available copy of this book already exists. You are free to check out a copy");
 
             //checking if member already has a reservation for the book
             var alreadyHasReservation = await _context.Reservations
-                .AnyAsync(r => r.MemberId == newReservation.MemberId && r.BookId == newReservation.BookId && r.Status == ReservationSatus.Pending);
+                .AnyAsync(r => r.MemberId == member.Id && r.BookId == newReservation.BookId && r.Status == ReservationSatus.Pending);
             if (alreadyHasReservation)
                 return BadRequest("Member already has a pending reservation on this book");
             
             //checking if the member already has the book on loan
             var hasActiveLoan = await _context.Loans
-                .Where(l => l.MemberId == newReservation.MemberId && !l.ReturnDate.HasValue)
+                .Where(l => l.MemberId == member.Id && !l.ReturnDate.HasValue)
                 .Include(l => l.BookCopy)
                 .AnyAsync( l => l.BookCopy!.BookId == newReservation.BookId );
 
@@ -94,7 +111,7 @@ namespace LibrarySystemApi.Controllers
             var reservation = new Reservation
             {
                 BookId = newReservation.BookId,
-                MemberId = newReservation.MemberId,
+                MemberId = member.Id,
                 ReservationDate = DateTimeOffset.Now,
                 Status = ReservationSatus.Pending
             };
@@ -104,6 +121,7 @@ namespace LibrarySystemApi.Controllers
             return CreatedAtAction(nameof(GetReservationById), new {id = reservation.Id}, reservation);
                 
         }
+        [Authorize(Roles = adminRole)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteReservation(int id)
         {
@@ -114,6 +132,7 @@ namespace LibrarySystemApi.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+        [Authorize(Roles = adminRole)]
         [HttpPost("cleanup")]
         public async Task<IActionResult> CleanupExpiredReservations()
         {

@@ -1,9 +1,12 @@
-﻿using LibrarySystemApi.Data;
+﻿using System.Security.Claims;
+using LibrarySystemApi.Data;
 using LibrarySystemApi.Dtos;
 using LibrarySystemApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Identity.Client;
 
 namespace LibrarySystemApi.Controllers
@@ -28,33 +31,23 @@ namespace LibrarySystemApi.Controllers
                 return NotFound($"Member is not found");
             return Ok(existingMembers);
         }
-        [HttpPost]
-        public async Task<ActionResult> AddMembers(CreateMemberDto newMemberDto)
+       
+        [HttpPut("editProfile")]
+        public async Task<IActionResult> UpdateMember(UpdateMemberDto updatedMemberDto)
         {
-            if (newMemberDto == null)
-                return BadRequest();
+            
+            var userClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userClaim == null)
+                return Unauthorized("User is not active");
+            var userId = Guid.Parse(userClaim);
 
-            var newMember = new Member
-            {
-                FullName = newMemberDto.FullName,
-                Email = newMemberDto.Email,
-                Phone = newMemberDto.Phone,
-                Address = newMemberDto.Address,
-                JoinedDate = DateTime.UtcNow
-            };
-
-            _context.Members.Add(newMember);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetMemberById), new {id = newMember.Id}, newMember);
-        }
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateMember(int id, UpdateMemberDto updatedMemberDto)
-        {
-            var existingMember = await _context.Members.FindAsync(id);
+            var existingMember = await _context.Members.FirstOrDefaultAsync(u => u.UserId == userId);
             if (existingMember == null)
-                return NotFound();
+                return Unauthorized("Sorry you are not allowed");
             existingMember.FullName = updatedMemberDto.FullName;
             existingMember.Email = updatedMemberDto.Email;
+            existingMember.Phone = updatedMemberDto.Phone;
+            existingMember.Address = updatedMemberDto.Address;
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -69,6 +62,7 @@ namespace LibrarySystemApi.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+        [Authorize(Roles = "Member")]
         [HttpGet("{id}/borrowHistory")]
         public async Task<ActionResult<List<LoanDto>>> GetBorrowedBooksForMember(int id)
         {

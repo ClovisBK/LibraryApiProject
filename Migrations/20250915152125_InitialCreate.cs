@@ -41,20 +41,19 @@ namespace LibrarySystemApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Members",
+                name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    JoinedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RefreshTokenExpiryTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Members", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -89,6 +88,54 @@ namespace LibrarySystemApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Admins",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    JoinedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Admins", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Admins_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Members",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    JoinedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Members", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Members_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "BooksCopies",
                 columns: table => new
                 {
@@ -111,6 +158,34 @@ namespace LibrarySystemApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Reservations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BookId = table.Column<int>(type: "int", nullable: false),
+                    MemberId = table.Column<int>(type: "int", nullable: false),
+                    ReservationDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reservations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Reservations_Books_BookId",
+                        column: x => x.BookId,
+                        principalTable: "Books",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Reservations_Members_MemberId",
+                        column: x => x.MemberId,
+                        principalTable: "Members",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Loans",
                 columns: table => new
                 {
@@ -118,9 +193,10 @@ namespace LibrarySystemApi.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BookCopyId = table.Column<int>(type: "int", nullable: false),
                     MemberId = table.Column<int>(type: "int", nullable: false),
-                    LoanDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LoanDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ReturnDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ReturnDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    Renewals = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -174,17 +250,14 @@ namespace LibrarySystemApi.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Members",
-                columns: new[] { "Id", "Address", "Email", "FullName", "JoinedDate", "Phone" },
-                values: new object[,]
-                {
-                    { 1, "Mvog-Betsi, Baobab", "kebehclovis@gmail.com", "Kebeh Clovis", new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "+237 679695180" },
-                    { 2, "Ohio, Bellevue", "amira.johnson@example.com", "Amira Johnson", new DateTime(2024, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "+1 434534534455" },
-                    { 3, "Obili", "david.lee@example.com", "David Lee", new DateTime(2024, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "+237 654432443" },
-                    { 4, "Nkolbisson", "fatima.ali@example.com", "Fatima Ali", new DateTime(2025, 2, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), "+237 654345676" },
-                    { 5, "Leke steet 1", "luca.rossi@example.com", "Luca Rossi", new DateTime(2022, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "+234 5334645345" },
-                    { 6, "", "sophia.mueller@example.com", "Sophia Müller", new DateTime(2023, 11, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), "+237 674534321" }
-                });
+                table: "Users",
+                columns: new[] { "Id", "Email", "PasswordHash", "RefreshToken", "RefreshTokenExpiryTime", "Role" },
+                values: new object[] { new Guid("11111111-1111-1111-1111-111111111111"), "clovis@mail.com", "AQAAAAIAAYagAAAAEFK0oYnrWfEwye5H/s6oxNRwVBLxbSqrj6X0/dPwVg5vRsQom3Vu/gNF2x6R9uKWQQ==", null, null, "Admin" });
+
+            migrationBuilder.InsertData(
+                table: "Admins",
+                columns: new[] { "Id", "Address", "Email", "FullName", "JoinedDate", "Phone", "UserId" },
+                values: new object[] { 1, "Mvog-Betsi", "clovis@mail.com", "Clovis Bin Kebeh", new DateTime(2025, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "+237645645432", new Guid("11111111-1111-1111-1111-111111111111") });
 
             migrationBuilder.InsertData(
                 table: "Books",
@@ -220,15 +293,10 @@ namespace LibrarySystemApi.Migrations
                     { 5, "1234567891111", 1, "copy #4", "Available" }
                 });
 
-            migrationBuilder.InsertData(
-                table: "Loans",
-                columns: new[] { "Id", "BookCopyId", "DueDate", "LoanDate", "MemberId", "ReturnDate" },
-                values: new object[,]
-                {
-                    { 1, 1, new DateTime(2024, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, null },
-                    { 2, 2, new DateTime(2024, 6, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 6, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, null },
-                    { 3, 3, new DateTime(2024, 6, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, null }
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_Admins_UserId",
+                table: "Admins",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Books_AuthorId",
@@ -261,13 +329,34 @@ namespace LibrarySystemApi.Migrations
                 name: "IX_Loans_MemberId",
                 table: "Loans",
                 column: "MemberId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Members_UserId",
+                table: "Members",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reservations_BookId",
+                table: "Reservations",
+                column: "BookId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reservations_MemberId",
+                table: "Reservations",
+                column: "MemberId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Admins");
+
+            migrationBuilder.DropTable(
                 name: "Loans");
+
+            migrationBuilder.DropTable(
+                name: "Reservations");
 
             migrationBuilder.DropTable(
                 name: "BooksCopies");
@@ -277,6 +366,9 @@ namespace LibrarySystemApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "Books");
+
+            migrationBuilder.DropTable(
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Authors");
